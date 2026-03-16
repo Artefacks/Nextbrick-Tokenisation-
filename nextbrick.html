@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextBrick — Investissement immobilier tokenisé en Suisse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* Scroll offset for fixed nav (64px) */
+#how, #projects, #why, #waitlist {
+  scroll-margin-top: 64px;
+}
+
+:root {
+  --navy:   #1B2A4A;
+  --navy2:  #243a63;
+  --teal:   #1A6B5F;
+  --teal2:  #155a4f;
+  --gold:   #B8965A;
+  --light:  #F4F2EE;
+  --white:  #FFFFFF;
+  --grey:   #8A8A8A;
+  --border: #DDD8D0;
+  --error:  #C0392B;
+  --text:   #2C2C2C;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+nav.scrolled {
+  border-color: var(--border);
+  box-shadow: 0 2px 20px rgba(27,42,74,0.06);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--grey);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-links a:hover { color: var(--navy); }
+.nav-cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white) !important;
+  background: var(--navy);
+  padding: 9px 20px;
+  border-radius: 2px;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--navy2) !important; color: var(--white) !important; }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+.hamburger span {
+  width: 22px; height: 1.5px;
+  background: var(--navy);
+  transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* Focus visible for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+.bopt:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.bopt {
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 50%, rgba(26,107,95,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 20% 80%, rgba(184,150,90,0.08) 0%, transparent 50%),
+    linear-gradient(135deg, #1B2A4A 0%, #0F1B31 100%);
+}
+
+/* Subtle grid texture */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 80px;
+  align-items: center;
+  width: 100%;
+}
+.hero-left {
+  opacity: 0;
+  animation: heroFadeIn 0.8s ease forwards;
+}
+.hero-card {
+  animation: heroFadeIn 0.8s ease 0.2s forwards;
+  opacity: 0;
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-left {}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(184,150,90,0.15);
+  border: 1px solid rgba(184,150,90,0.3);
+  border-radius: 2px;
+  padding: 6px 14px;
+  margin-bottom: 28px;
+}
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.6;transform:scale(1.2)}
+}
+.hero-badge-text {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  padding: 14px 28px;
+  background: var(--gold);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+}
+.btn-primary:hover { background: #a07d48; transform: translateY(-1px); }
+.btn-ghost {
+  padding: 14px 28px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 52px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.hero-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.hero-stat-label {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.04em;
+}
+
+/* Hero card */
+.hero-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+.hero-card-img {
+  height: 200px;
+  background: linear-gradient(135deg, #1A6B5F 0%, #0d3d36 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.hero-card-img-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-card-img-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.03) 0px,
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 20px
+  );
+}
+.hero-card-badge {
+  position: absolute;
+  top: 16px; left: 16px;
+  z-index: 2;
+  background: var(--gold);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 1px;
+}
+.hero-card-location {
+  position: absolute;
+  bottom: 16px; left: 16px;
+  z-index: 2;
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-building {
+  font-size: 64px;
+  opacity: 0.15;
+}
+.hero-card-body {
+  padding: 24px;
+}
+.hero-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.hero-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.metric { }
+.metric-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.metric-val.green { color: #5DD9A4; }
+.metric-label {
+  font-size: 10px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.progress-bar-wrap {
+  margin-bottom: 8px;
+}
+.progress-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), #5DD9A4);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1.5s ease 0.5s;
+}
+.hero-card-cta {
+  width: 100%;
+  padding: 12px;
+  background: var(--white);
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.hero-card-cta:hover { opacity: 0.9; }
+
+/* ═══════════════════════════════════════════════
+   SHARED SECTION STYLES
+═══════════════════════════════════════════════ */
+section {
+  padding: 100px 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.section-full {
+  max-width: 100%;
+  padding: 100px 0;
+}
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.section-eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--grey);
+  line-height: 1.7;
+  max-width: 520px;
+}
+
+/* ═══════════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════════ */
+#how { background: var(--light); }
+#how .section-full { background: var(--light); }
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 56px;
+}
+.how-step {
+  background: var(--white);
+  padding: 36px 28px;
+  position: relative;
+  transition: background 0.2s;
+}
+.how-step:hover { background: #FAFAF8; }
+.how-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--light);
+  line-height: 1;
+  margin-bottom: 16px;
+  -webkit-text-stroke: 1px var(--border);
+}
+.how-icon {
+  font-size: 24px;
+  margin-bottom: 14px;
+  display: block;
+}
+.how-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.how-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--grey);
+  line-height: 1.6;
+}
+.how-tag {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 1px;
+  background: var(--light);
+  color: var(--grey);
+}
+
+/* Flow diagram */
+.flow-section {
+  margin-top: 56px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  padding: 36px 40px;
+}
+.flow-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 28px;
+}
+.flow-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.flow-node {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.flow-circle {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.25s;
+  cursor: default;
+}
+.flow-node:hover .flow-circle {
+  border-color: var(--teal);
+  transform: scale(1.1);
+}
+.flow-node-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navy);
+  text-align: center;
+}
+.flow-node-time {
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--grey);
+  text-align: center;
+  font-style: italic;
+}
+.flow-connector {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  margin-bottom: 28px;
+  color: var(--gold);
+  font-size: 18px;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   PROJECTS
+═══════════════════════════════════════════════ */
+#projects {}
+
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+}
+.projects-filter {
+  display: flex;
+  gap: 4px;
+}
+.filter-btn {
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--grey);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.filter-btn.active {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+}
+.filter-btn:hover:not(.active) { border-color: var(--navy); color: var(--navy); }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.project-card {
+  background: var(--white);
+  transition: background 0.2s, box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.project-card:hover {
+  background: #FAFAF8;
+  box-shadow: 0 8px 32px rgba(27,42,74,0.1);
+  transform: translateY(-2px);
+}
+
+.project-thumb {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+.project-thumb-bg,
+.project-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+.project-thumb-img {
+  object-fit: cover;
+  z-index: 1;
+  background: linear-gradient(135deg, #1A6B5F 0%, #0a3530 100%);
+}
+.project-thumb-bg {
+  z-index: 0;
+  background: linear-gradient(135deg, #1A6B5F 0%, #0a3530 100%);
+}
+.project-card:hover .project-thumb-bg,
+.project-card:hover .project-thumb-img { transform: scale(1.04); }
+.thumb-1 { background: linear-gradient(135deg, #1A6B5F 0%, #0a3530 100%); }
+.thumb-2 { background: linear-gradient(135deg, #1B2A4A 0%, #0a1628 100%); }
+.thumb-3 { background: linear-gradient(135deg, #3a2a1a 0%, #B8965A 100%); }
+.thumb-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.04) 0px,
+    rgba(255,255,255,0.04) 1px,
+    transparent 1px,
+    transparent 24px
+  );
+}
+.project-status {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 2;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 1px;
+}
+.status-soon { background: var(--gold); color: var(--white); }
+.status-open { background: #1A6B5F; color: var(--white); }
+.status-full { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); }
+.project-type {
+  position: absolute;
+  bottom: 14px; left: 14px;
+  z-index: 2;
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 300;
+}
+
+.project-body { padding: 24px; }
+.project-city {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.project-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.project-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.pm-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 2px;
+}
+.pm-val.teal { color: var(--teal); }
+.pm-label {
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--grey);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.project-progress { margin-bottom: 16px; }
+.pp-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--grey);
+  margin-bottom: 6px;
+}
+.pp-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.pp-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1.5s ease 0.3s;
+}
+.fill-teal { background: var(--teal); }
+.fill-gold { background: var(--gold); }
+.fill-navy { background: var(--navy); }
+
+.project-cta {
+  width: 100%;
+  padding: 11px;
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.02em;
+}
+.project-cta:hover { background: var(--navy2); }
+.project-cta.ghost {
+  background: var(--white);
+  color: var(--grey);
+  border: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════
+   WHY NEXTBRICK
+═══════════════════════════════════════════════ */
+#why { background: var(--navy); }
+#why .section-full { background: var(--navy); }
+#why .section-title { color: var(--white); }
+#why .section-sub { color: rgba(255,255,255,0.5); }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-top: 56px;
+}
+.why-item {
+  background: rgba(255,255,255,0.03);
+  padding: 36px 32px;
+  transition: background 0.2s;
+}
+.why-item:hover { background: rgba(255,255,255,0.06); }
+.why-icon {
+  font-size: 28px;
+  margin-bottom: 20px;
+  display: block;
+}
+.why-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.why-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+}
+.why-highlight {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(184,150,90,0.3);
+  padding-bottom: 2px;
+}
+
+/* Logos strip */
+.logos-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-top: none;
+}
+.logo-item {
+  flex: 1;
+  padding: 20px 28px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-item:last-child { border-right: none; }
+.logo-badge {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.04em;
+}
+.logo-badge strong {
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════
+   WAITLIST
+═══════════════════════════════════════════════ */
+#waitlist { background: var(--light); }
+#waitlist .section-full { background: var(--light); }
+
+.waitlist-wrap {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 80px;
+  align-items: start;
+  margin-top: 0;
+}
+
+.waitlist-left {}
+.waitlist-left .section-eyebrow { margin-top: 0; }
+
+.waitlist-features {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.wf-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.wf-icon {
+  width: 36px; height: 36px;
+  border-radius: 2px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.wf-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 3px;
+}
+.wf-desc {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--grey);
+  line-height: 1.5;
+}
+
+/* Form card */
+.form-card {
+  background: var(--white);
+  border-radius: 2px;
+  padding: 40px 36px 32px;
+  box-shadow: 0 2px 40px rgba(27,42,74,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.form-card::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background: linear-gradient(90deg, var(--navy), var(--teal), var(--gold));
+}
+
+.field { margin-bottom: 18px; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.field-label span { color: var(--gold); }
+input[type="email"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--navy);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+}
+input[type="email"]:focus { border-color: var(--navy); }
+input[type="email"].err { border-color: var(--error); }
+input::placeholder { color: #BDBDBD; }
+
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.bopt {
+  border: 1.5px solid var(--border);
+  border-radius: 2px;
+  padding: 14px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  background: var(--white);
+  user-select: none;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.bopt:hover { border-color: var(--navy); }
+.bopt.sel { background: var(--navy); border-color: var(--navy); }
+.bopt-amt {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  display: block;
+  margin-bottom: 2px;
+}
+.bopt.sel .bopt-amt { color: var(--white); }
+.bopt-sub {
+  font-size: 10px;
+  color: var(--grey);
+  font-weight: 300;
+  display: block;
+}
+.bopt.sel .bopt-sub { color: rgba(255,255,255,0.4); }
+
+.err-msg {
+  font-size: 11px;
+  color: var(--error);
+  margin-top: 5px;
+  display: none;
+}
+.err-msg-network {
+  margin-top: 12px;
+  margin-bottom: -8px;
+}
+.form-card.shake {
+  animation: shake 0.4s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 22px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.submit-btn:hover { background: var(--navy2); }
+.submit-btn:disabled { background: #B0B0B0; cursor: default; }
+.submit-arrow { transition: transform 0.2s; }
+.submit-btn:hover .submit-arrow { transform: translateX(4px); }
+
+.form-legal {
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 300;
+  color: #ADADAD;
+  line-height: 1.6;
+  text-align: center;
+}
+.form-legal a { color: var(--teal); text-decoration: none; }
+
+/* Success */
+.success-view {
+  display: none;
+  text-align: center;
+  padding: 16px 0;
+}
+.success-ring {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: #E6F4F1;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 24px;
+}
+.success-h {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.success-p {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--grey);
+  line-height: 1.6;
+}
+.success-chip {
+  display: inline-block;
+  margin-top: 18px;
+  background: #E6F4F1;
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 1px;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer {
+  background: var(--navy);
+  padding: 48px;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-copy {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.25);
+  line-height: 1.6;
+  text-align: center;
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-links a {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: rgba(255,255,255,0.7); }
+
+/* ═══════════════════════════════════════════════
+   SCROLL ANIMATIONS
+═══════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  nav .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  section { padding: 72px 24px; }
+  .section-inner { padding: 0 24px; }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding: 100px 24px 60px;
+    gap: 48px;
+  }
+  .hero-card { max-width: 100%; }
+  .hero-stats { gap: 20px; }
+
+  .how-grid { grid-template-columns: repeat(2, 1fr); }
+  .projects-grid { grid-template-columns: 1fr; }
+  .projects-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .why-grid { grid-template-columns: 1fr; }
+  .logos-strip { flex-wrap: wrap; }
+  .logo-item { flex: none; width: 50%; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .waitlist-wrap { grid-template-columns: 1fr; gap: 48px; }
+  .flow-row { flex-wrap: wrap; gap: 16px; }
+  .flow-connector { display: none; }
+
+  footer { padding: 36px 24px; }
+  .footer-inner { flex-direction: column; text-align: center; }
+}
+@media (max-width: 600px) {
+  .how-grid { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 16px; }
+  .form-card { padding: 28px 20px 24px; }
+  .budget-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .bopt { min-height: 48px; }
+  .filter-btn,
+  .nav-cta,
+  .btn-primary,
+  .btn-ghost,
+  .project-cta,
+  .submit-btn {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="navbar">
+  <a href="#" class="logo">
+    <div class="logo-dot"></div>
+    NextBrick
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">Comment ça marche</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#why">Pourquoi NextBrick</a></li>
+    <li><a href="#waitlist" class="nav-cta">Rejoindre la liste</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mobileMenu" style="display:none;position:fixed;top:64px;left:0;right:0;background:white;z-index:99;padding:20px 24px;border-bottom:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+  <a href="#how" onclick="closeMenu()" style="display:block;padding:14px 0;font-size:15px;color:var(--navy);text-decoration:none;border-bottom:1px solid var(--border);">Comment ça marche</a>
+  <a href="#projects" onclick="closeMenu()" style="display:block;padding:14px 0;font-size:15px;color:var(--navy);text-decoration:none;border-bottom:1px solid var(--border);">Projets</a>
+  <a href="#why" onclick="closeMenu()" style="display:block;padding:14px 0;font-size:15px;color:var(--navy);text-decoration:none;border-bottom:1px solid var(--border);">Pourquoi NextBrick</a>
+  <a href="#waitlist" onclick="closeMenu()" style="display:block;margin-top:16px;padding:14px;background:var(--navy);color:white;text-align:center;text-decoration:none;border-radius:2px;font-size:14px;font-weight:500;">Rejoindre la liste d'attente</a>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero" style="padding:0;max-width:100%;">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        <span class="hero-badge-text">Lancement 2026 · Jura</span>
+      </div>
+      <h1 class="hero-title">
+        L'immobilier suisse<br>
+        accessible dès<br>
+        <em>500 CHF</em>
+      </h1>
+      <p class="hero-sub">
+        NextBrick tokenise des projets immobiliers soigneusement sélectionnés en Suisse. Investissez, percevez vos loyers, revendez vos tokens — simplement.
+      </p>
+      <div class="hero-actions">
+        <a href="#waitlist" class="btn-primary">Rejoindre la liste d'attente →</a>
+        <a href="#how" class="btn-ghost">Comment ça marche</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">500 CHF</div>
+          <div class="hero-stat-label">Ticket minimum</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">5%</div>
+          <div class="hero-stat-label">Rendement cible / an</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">100%</div>
+          <div class="hero-stat-label">Cadre légal suisse</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project preview card -->
+    <div class="hero-card">
+      <div class="hero-card-img">
+        <img src="https://images.unsplash.com/photo-1693092180889-44df806811af?w=800&h=600&fit=crop" alt="Projet Jura, Carminetti Architecture" class="hero-card-img-photo">
+        <div class="thumb-pattern"></div>
+        <span class="hero-card-badge">Premier projet</span>
+        <div class="hero-card-location">Jura, CH · Carminetti Architecture</div>
+      </div>
+      <div class="hero-card-body">
+        <div class="hero-card-title">Rénovation locative — Jura</div>
+        <div class="hero-card-metrics">
+          <div class="metric">
+            <div class="metric-val green">5.0%</div>
+            <div class="metric-label">Rendement</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">150k</div>
+            <div class="metric-label">Volume CHF</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">5 ans</div>
+            <div class="metric-label">Durée</div>
+          </div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-label">
+            <span>Souscriptions ouvertes bientôt</span>
+            <span id="heroPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" id="heroBar"></div>
+          </div>
+        </div>
+        <button class="hero-card-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+          Être notifié à l'ouverture
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<div id="how" class="section-full">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Le processus</div>
+    <h2 class="section-title reveal reveal-delay-1">Comment ça marche</h2>
+    <p class="section-sub reveal reveal-delay-2">Quatre étapes simples, de la souscription à la distribution de vos revenus.</p>
+
+    <div class="how-grid">
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-num">01</div>
+        <div class="how-title">Vous choisissez un projet</div>
+        <div class="how-desc">Chaque projet est présenté avec l'adresse, les photos, le rendement attendu et le détail des risques. Prospectus FinSA disponible.</div>
+        <span class="how-tag">Investisseurs</span>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-num">02</div>
+        <div class="how-title">NextBrick structure l'offre</div>
+        <div class="how-desc">Une SPV dédiée est créée pour chaque projet. Les tokens sont émis sur la blockchain. Le prospectus est vérifié par un réviseur agréé.</div>
+        <span class="how-tag">NextBrick SA</span>
+      </div>
+      <div class="how-step reveal reveal-delay-3">
+        <div class="how-num">03</div>
+        <div class="how-title">Le projet est financé</div>
+        <div class="how-desc">La SPV finance la rénovation ou l'acquisition. La dette bancaire (65%) et les fonds tokenisés (35%) financent ensemble l'opération.</div>
+        <span class="how-tag">SPV · Banque</span>
+      </div>
+      <div class="how-step reveal reveal-delay-4">
+        <div class="how-num">04</div>
+        <div class="how-title">Vous percevez vos revenus</div>
+        <div class="how-desc">Les loyers générés sont redistribués chaque trimestre, proportionnellement aux tokens détenus. Suivi en temps réel depuis votre espace.</div>
+        <span class="how-tag">Trimestriel</span>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-section reveal">
+      <div class="flow-title">Flux de l'investissement</div>
+      <div class="flow-row">
+        <div class="flow-node">
+          <div class="flow-circle">CHF</div>
+          <div class="flow-node-name">Investisseurs</div>
+          <div class="flow-node-time">À la souscription</div>
+        </div>
+        <div class="flow-connector">→</div>
+        <div class="flow-node">
+          <div class="flow-circle">T</div>
+          <div class="flow-node-name">Tokens émis</div>
+          <div class="flow-node-time">Blockchain · J+1</div>
+        </div>
+        <div class="flow-connector">→</div>
+        <div class="flow-node">
+          <div class="flow-circle">S</div>
+          <div class="flow-node-name">SPV financée</div>
+          <div class="flow-node-time">Closing · J+30</div>
+        </div>
+        <div class="flow-connector">→</div>
+        <div class="flow-node">
+          <div class="flow-circle">P</div>
+          <div class="flow-node-name">Projet actif</div>
+          <div class="flow-node-time">Exploitation</div>
+        </div>
+        <div class="flow-connector">→</div>
+        <div class="flow-node">
+          <div class="flow-circle">R</div>
+          <div class="flow-node-name">Revenus</div>
+          <div class="flow-node-time">Loyers trimestriels</div>
+        </div>
+        <div class="flow-connector">→</div>
+        <div class="flow-node">
+          <div class="flow-circle" style="border-color:var(--teal);color:var(--teal);">%</div>
+          <div class="flow-node-name" style="color:var(--teal);">Distribution</div>
+          <div class="flow-node-time">Pro-rata tokens</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROJECTS ═══ -->
+<section id="projects">
+  <div class="projects-header">
+    <div>
+      <div class="section-eyebrow reveal">Opportunités</div>
+      <h2 class="section-title reveal reveal-delay-1">Projets en cours & à venir</h2>
+    </div>
+    <div class="projects-filter reveal">
+      <button class="filter-btn active" onclick="filterProjects(this,'all')">Tous</button>
+      <button class="filter-btn" onclick="filterProjects(this,'travaux')">Rénovation</button>
+      <button class="filter-btn" onclick="filterProjects(this,'acquisition')">Acquisition</button>
+    </div>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- Project 1 -->
+    <div class="project-card reveal" data-type="travaux">
+      <div class="project-thumb">
+        <img src="https://images.unsplash.com/photo-1693092180889-44df806811af?w=800&h=600&fit=crop" alt="Rénovation locative Jura, Carminetti Architecture" class="project-thumb-img" loading="lazy">
+        <div class="project-thumb-bg thumb-1" aria-hidden="true">
+          <div class="thumb-pattern"></div>
+        </div>
+        <span class="project-status status-soon">Bientôt disponible</span>
+        <div class="project-type">Prêt participatif · Rénovation · Carminetti Architecture</div>
+      </div>
+      <div class="project-body">
+        <div class="project-city">Jura</div>
+        <div class="project-name">Rénovation locative<br>Carminetti Architecture</div>
+        <div class="project-metrics">
+          <div>
+            <div class="pm-val teal">5.0%</div>
+            <div class="pm-label">Rendement</div>
+          </div>
+          <div>
+            <div class="pm-val">150k</div>
+            <div class="pm-label">Volume CHF</div>
+          </div>
+          <div>
+            <div class="pm-val">500</div>
+            <div class="pm-label">Min. CHF</div>
+          </div>
+        </div>
+        <div class="project-progress">
+          <div class="pp-label">
+            <span>Souscriptions</span>
+            <span class="pct-label">0%</span>
+          </div>
+          <div class="pp-bar">
+            <div class="pp-fill fill-teal" data-target="0"></div>
+          </div>
+        </div>
+        <button class="project-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+          Être notifié →
+        </button>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card reveal reveal-delay-2" data-type="acquisition">
+      <div class="project-thumb">
+        <img src="https://images.unsplash.com/photo-1571504532278-0486d021fa3d?w=800&h=600&fit=crop" alt="Immeuble locatif Ouchy, Lausanne" class="project-thumb-img" loading="lazy">
+        <div class="project-thumb-bg thumb-2" aria-hidden="true">
+          <div class="thumb-pattern"></div>
+        </div>
+        <span class="project-status status-soon">À venir — A2</span>
+        <div class="project-type">Acquisition locative · Senior/Junior</div>
+      </div>
+      <div class="project-body">
+        <div class="project-city">Lausanne</div>
+        <div class="project-name">Immeuble locatif<br>Ouchy</div>
+        <div class="project-metrics">
+          <div>
+            <div class="pm-val teal">5.2%</div>
+            <div class="pm-label">Rendement</div>
+          </div>
+          <div>
+            <div class="pm-val">350k</div>
+            <div class="pm-label">Tranche token</div>
+          </div>
+          <div>
+            <div class="pm-val">500</div>
+            <div class="pm-label">Min. CHF</div>
+          </div>
+        </div>
+        <div class="project-progress">
+          <div class="pp-label">
+            <span>Ouverture prévue</span>
+            <span>2026</span>
+          </div>
+          <div class="pp-bar">
+            <div class="pp-fill fill-navy" data-target="0"></div>
+          </div>
+        </div>
+        <button class="project-cta ghost" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+          Suivre ce projet
+        </button>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-card reveal reveal-delay-3" data-type="acquisition">
+      <div class="project-thumb">
+        <img src="https://images.unsplash.com/photo-1763441344610-9c0946421fb2?w=800&h=600&fit=crop" alt="Immeuble locatif Eaux-Vives, Genève" class="project-thumb-img" loading="lazy">
+        <div class="project-thumb-bg thumb-3" aria-hidden="true">
+          <div class="thumb-pattern"></div>
+        </div>
+        <span class="project-status status-soon">À venir — A2</span>
+        <div class="project-type">Acquisition locative · Senior/Junior</div>
+      </div>
+      <div class="project-body">
+        <div class="project-city">Genève</div>
+        <div class="project-name">Immeuble locatif<br>Eaux-Vives</div>
+        <div class="project-metrics">
+          <div>
+            <div class="pm-val teal">4.8%</div>
+            <div class="pm-label">Rendement</div>
+          </div>
+          <div>
+            <div class="pm-val">350k</div>
+            <div class="pm-label">Tranche token</div>
+          </div>
+          <div>
+            <div class="pm-val">500</div>
+            <div class="pm-label">Min. CHF</div>
+          </div>
+        </div>
+        <div class="project-progress">
+          <div class="pp-label">
+            <span>Ouverture prévue</span>
+            <span>2026</span>
+          </div>
+          <div class="pp-bar">
+            <div class="pp-fill fill-gold" data-target="0"></div>
+          </div>
+        </div>
+        <button class="project-cta ghost" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+          Suivre ce projet
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ WHY NEXTBRICK ═══ -->
+<div id="why" class="section-full">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal" style="color:rgba(184,150,90,0.8)">Confiance & sécurité</div>
+    <h2 class="section-title reveal reveal-delay-1">Pourquoi NextBrick</h2>
+    <p class="section-sub reveal reveal-delay-2" style="color:rgba(255,255,255,0.45)">Un cadre légal rigoureux, une technologie éprouvée, une équipe basée en Suisse.</p>
+
+    <div class="why-grid">
+      <div class="why-item reveal reveal-delay-1">
+        <div class="why-title">Cadre légal suisse</div>
+        <div class="why-desc">NextBrick SA est constituée en Suisse, affiliée OAR VQF, et chaque offre fait l'objet d'un prospectus approuvé conformément à la FinSA.</div>
+        <span class="why-highlight">OAR VQF · FinSA</span>
+      </div>
+      <div class="why-item reveal reveal-delay-2">
+        <div class="why-title">Isolation du risque</div>
+        <div class="why-desc">Chaque projet est logé dans une SPV dédiée. La dette hypothécaire reste au niveau de la SPV — elle n'affecte jamais le bilan de NextBrick SA.</div>
+        <span class="why-highlight">1 projet = 1 SPV</span>
+      </div>
+      <div class="why-item reveal reveal-delay-3">
+        <div class="why-title">Blockchain & traçabilité</div>
+        <div class="why-desc">Chaque token est enregistré sur la blockchain. La propriété, les transferts et les distributions sont traçables, transparents et immuables.</div>
+        <span class="why-highlight">CoreLedger · DLT</span>
+      </div>
+      <div class="why-item reveal reveal-delay-1">
+        <div class="why-title">Liquidité secondaire</div>
+        <div class="why-desc">Contrairement à un investissement immobilier classique, vos tokens peuvent être revendus à d'autres investisseurs via SDX dès l'année 3.</div>
+        <span class="why-highlight">SDX · BX Digital</span>
+      </div>
+      <div class="why-item reveal reveal-delay-2">
+        <div class="why-title">Transparence totale</div>
+        <div class="why-desc">Chaque projet publie un prospectus complet, les états financiers de la SPV et un rapport trimestriel. Aucune information n'est dissimulée.</div>
+        <span class="why-highlight">Prospectus public</span>
+      </div>
+      <div class="why-item reveal reveal-delay-3">
+        <div class="why-title">100% Suisse</div>
+        <div class="why-desc">Équipe basée à Genève, projets en Suisse, banques cantonales partenaires. NextBrick s'inscrit dans l'écosystème financier suisse, pas hors de lui.</div>
+        <span class="why-highlight">Genève · Suisse</span>
+      </div>
+    </div>
+
+    <!-- Logos / certifications -->
+    <div class="logos-strip reveal">
+      <div class="logo-item">
+        <div class="logo-badge"><strong>OAR VQF</strong><br>Organisme d'autorégulation FINMA</div>
+      </div>
+      <div class="logo-item">
+        <div class="logo-badge"><strong>FinSA</strong><br>Prospectus vérifié par réviseur agréé</div>
+      </div>
+      <div class="logo-item">
+        <div class="logo-badge"><strong>CoreLedger</strong><br>Infrastructure blockchain suisse</div>
+      </div>
+      <div class="logo-item">
+        <div class="logo-badge"><strong>SDX</strong><br>Marché secondaire SIX Digital Exchange</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WAITLIST ═══ -->
+<div id="waitlist" class="section-full">
+  <div class="section-inner">
+    <div class="waitlist-wrap">
+      <div class="waitlist-left">
+        <div class="section-eyebrow reveal">Accès prioritaire</div>
+        <h2 class="section-title reveal reveal-delay-1">Rejoignez la liste<br>d'attente</h2>
+        <p class="section-sub reveal reveal-delay-2">Soyez notifié en avant-première à l'ouverture du premier projet. Choisissez votre budget dès maintenant.</p>
+
+        <div class="waitlist-features reveal reveal-delay-3">
+          <div class="wf-item">
+            <div class="wf-icon" aria-hidden="true">1</div>
+            <div>
+              <div class="wf-title">Accès avant l'ouverture publique</div>
+              <div class="wf-desc">Les inscrits sont contactés 48h avant la mise en ligne officielle du projet.</div>
+            </div>
+          </div>
+          <div class="wf-item">
+            <div class="wf-icon" aria-hidden="true">2</div>
+            <div>
+              <div class="wf-title">Allocation garantie selon votre budget</div>
+              <div class="wf-desc">Votre tranche de budget est réservée lors de votre inscription — premier arrivé, premier servi.</div>
+            </div>
+          </div>
+          <div class="wf-item">
+            <div class="wf-icon" aria-hidden="true">3</div>
+            <div>
+              <div class="wf-title">Aucun engagement</div>
+              <div class="wf-desc">L'inscription est gratuite et sans engagement. Vous décidez librement au moment du lancement.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-card reveal reveal-delay-2">
+
+        <div id="formView">
+          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--navy);margin-bottom:6px;">Réservez votre place</div>
+          <div style="font-size:13px;font-weight:300;color:var(--grey);margin-bottom:20px;">Premier projet · Jura · Carminetti Architecture · Début 2026</div>
+
+          <div class="field">
+            <label class="field-label" for="email">Adresse e-mail <span>*</span></label>
+            <input type="email" id="email" placeholder="votre@email.ch" autocomplete="email">
+            <div class="err-msg" id="emailErr">Veuillez entrer une adresse e-mail valide.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Budget envisagé <span>*</span></label>
+            <div class="budget-grid" role="group" aria-label="Budget envisagé">
+              <div class="bopt" data-budget="500-5k CHF" role="button" tabindex="0" onclick="selectBudget(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBudget(this)}">
+                <span class="bopt-amt">500–5k</span>
+                <span class="bopt-sub">CHF</span>
+              </div>
+              <div class="bopt" data-budget="5k-20k CHF" role="button" tabindex="0" onclick="selectBudget(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBudget(this)}">
+                <span class="bopt-amt">5k–20k</span>
+                <span class="bopt-sub">CHF</span>
+              </div>
+              <div class="bopt" data-budget="20k+ CHF" role="button" tabindex="0" onclick="selectBudget(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectBudget(this)}">
+                <span class="bopt-amt">20k+</span>
+                <span class="bopt-sub">CHF</span>
+              </div>
+            </div>
+            <div class="err-msg" id="budgetErr">Veuillez sélectionner une tranche.</div>
+          </div>
+
+          <div class="err-msg err-msg-network" id="networkErr" role="alert" aria-live="polite">
+            Une erreur est survenue. Veuillez réessayer dans quelques instants.
+          </div>
+
+          <button class="submit-btn" id="submitBtn" type="button" onclick="handleSubmit()">
+            Confirmer mon inscription
+            <span class="submit-arrow">→</span>
+          </button>
+
+          <div class="form-legal">
+            Pas de spam · Aucun engagement · <a href="#">Politique de confidentialité</a>
+          </div>
+        </div>
+
+        <div class="success-view" id="successView" role="status" aria-live="polite">
+          <div class="success-ring">OK</div>
+          <div class="success-h">Vous êtes sur la liste</div>
+          <div class="success-p">Nous vous contacterons en avant-première dès l'ouverture du premier projet. À très bientôt.</div>
+          <div class="success-chip">Accès prioritaire confirmé</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="logo-dot"></div>
+      NextBrick
+    </div>
+    <div class="footer-copy">
+      © 2026 NextBrick SA · Genève, Suisse<br>
+      Affiliée OAR VQF · Offres soumises à prospectus FinSA · Investissement soumis à risques
+    </div>
+    <div class="footer-links">
+      <a href="#">Mentions légales</a>
+      <a href="#">Confidentialité</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Navbar scroll ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ── Mobile menu ──
+function toggleMenu() {
+  const m = document.getElementById('mobileMenu');
+  const h = document.getElementById('hamburger');
+  const isOpen = m.style.display === 'block';
+  m.style.display = isOpen ? 'none' : 'block';
+  h.classList.toggle('open', !isOpen);
+}
+function closeMenu() {
+  document.getElementById('mobileMenu').style.display = 'none';
+  document.getElementById('hamburger').classList.remove('open');
+}
+window.addEventListener('scroll', () => {
+  const m = document.getElementById('mobileMenu');
+  if (m.style.display === 'block' && window.scrollY > 20) closeMenu();
+});
+
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Animate progress bars
+      e.target.querySelectorAll('.pp-fill').forEach(bar => {
+        bar.style.width = (bar.dataset.target || 0) + '%';
+      });
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Hero progress bar animation
+setTimeout(() => {
+  const bar = document.getElementById('heroBar');
+  const pct = document.getElementById('heroPercent');
+  if (bar) {
+    bar.style.width = '0%';
+    pct.textContent = 'Bientôt';
+  }
+}, 800);
+
+// ── Project filter ──
+function filterProjects(btn, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.project-card').forEach(card => {
+    const show = type === 'all' || card.dataset.type === type;
+    card.style.display = show ? 'block' : 'none';
+  });
+}
+
+// ── Budget select ──
+function selectBudget(el) {
+  document.querySelectorAll('.bopt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('budgetErr').style.display = 'none';
+}
+
+// ── Form submit (Formspree) ──
+// Pour recevoir les emails des inscrits :
+// 1. Créez un compte sur formspree.io
+// 2. Créez un nouveau formulaire (Settings > Email pour activer les notifications)
+// 3. Copiez l'ID du formulaire (ex: xyzabcde) et remplacez ci-dessous
+const FORMSPREE_URL = 'https://formspree.io/f/xyknjwyb';
+
+function handleSubmit() {
+  let valid = true;
+  const email = document.getElementById('email');
+  const emailErr = document.getElementById('emailErr');
+  const budgetErr = document.getElementById('budgetErr');
+  const networkErr = document.getElementById('networkErr');
+  const selected = document.querySelector('.bopt.sel');
+  const formCard = document.querySelector('.form-card');
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  networkErr.style.display = 'none';
+
+  if (!re.test(email.value.trim())) {
+    email.classList.add('err');
+    emailErr.style.display = 'block';
+    valid = false;
+    formCard.classList.add('shake');
+    setTimeout(() => formCard.classList.remove('shake'), 400);
+  } else {
+    email.classList.remove('err');
+    emailErr.style.display = 'none';
+  }
+  if (!selected) {
+    budgetErr.style.display = 'block';
+    valid = false;
+    if (!formCard.classList.contains('shake')) {
+      formCard.classList.add('shake');
+      setTimeout(() => formCard.classList.remove('shake'), 400);
+    }
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="opacity:.6;font-size:13px;letter-spacing:.05em">Inscription en cours…</span>';
+
+  fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email.value.trim(),
+      budget: selected.dataset.budget || selected.querySelector('.bopt-amt').textContent + ' CHF'
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Erreur serveur');
+    return res.json();
+  })
+  .then(() => {
+    document.getElementById('formView').style.display = 'none';
+    const sv = document.getElementById('successView');
+    sv.style.cssText = 'display:block;animation:fadeSucc 0.4s ease forwards';
+  })
+  .catch(() => {
+    networkErr.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Confirmer mon inscription<span class="submit-arrow">→</span>';
+    formCard.classList.add('shake');
+    setTimeout(() => formCard.classList.remove('shake'), 400);
+  });
+}
+
+document.getElementById('email').addEventListener('input', function () {
+  this.classList.remove('err');
+  document.getElementById('emailErr').style.display = 'none';
+});
+
+// Add success animation
+const style = document.createElement('style');
+style.textContent = '@keyframes fadeSucc{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
